@@ -42,6 +42,10 @@ Ragioniamo come sempre a step. Prima scriviamo nei commenti la logica in italian
 - che dati devo inserire nel post?
     - quelli presenti nell'array
 
+
+// PROBLEMI RISCONTRATI
+    - Al click del like si evidenzia solo un post gli altri button non funzionano
+    -  Al click del like la pagina ritorna indietro 
 */
 
 
@@ -103,62 +107,80 @@ const posts = [
     }
 ];
 
+let postLiked =[]
+
 const containerHtml = document.getElementById("container")
 
-posts.forEach(post =>{
 
-    containerHtml.innerHTML += `
-    <div class="post">
+//GENERAZIONE DEI POST 
+posts.forEach(post => {
+    const postHtml = document.createElement("div");
+    postHtml.classList.add("post");
+    postHtml.innerHTML = `
         <div class="post__header">
             <div class="post-meta">                    
-                <div class="post-meta__icon" id="icon">
-                    <img class="profile-pic" src="${post['author']['image']}" alt="Phil Mangione">                    
-                    </div>
-                    <div class="post-meta__data">
-                        <div class="post-meta__author">
-                            ${post['author']['name']}
-                        </div>
-                        <div class="post-meta__time">
-                            ${post.created}
-                        </div>
-                    </div>                    
+                <div class="post-meta__icon">
+                    <img class="profile-pic" src="${post.author.image}" alt="${post.author.name}">                    
                 </div>
-            </div>
-            <div class="post__text">
-                ${post.content}
-            </div>
-            <div class="post__image">
-                ${post.media}
-            </div>
-            <div class="post__footer">
-                <div class="likes js-likes">
-                    <div class="likes__cta">
-                        <a class="like-button  js-like-button" href="#" data-postid="1">
-                            <i class="like-button__icon fas fa-thumbs-up" aria-hidden="true"></i>
-                            <span class="like-button__label">Mi Piace</span>
-                        </a>
+                <div class="post-meta__data">
+                    <div class="post-meta__author">
+                        ${post.author.name}
                     </div>
-                    <div class="likes__counter">
-                        Piace a <b id="like-counter-1" class="js-likes-counter">${post.likes}</b> persone
+                    <div class="post-meta__time">
+                        ${post.created}
                     </div>
-                </div> 
-            </div>            
+                </div>                    
+            </div>
         </div>
-`
-})
+        <div class="post__text">
+            ${post.content}
+        </div>
+        <div class="post__image">
+            <img src="${post.media}">
+        </div>
+        <div class="post__footer">
+            <div class="likes js-likes">
+                <div class="likes__cta">
+                    <a class="like-button js-like-button" href="#" data-postid="${post.id}">
+                        <i class="like-button__icon fas fa-thumbs-up" aria-hidden="true"></i>
+                        <span class="like-button__label">Mi Piace</span>
+                    </a>
+                </div>
+                <div class="likes__counter">
+                    Piace a <b class="js-likes-counter">${post.likes}</b> persone
+                </div>
+            </div> 
+        </div>
+    `;
+    containerHtml.appendChild(postHtml);
+
+    const likeHtml = postHtml.querySelector('.js-like-button');
+    const likeCounterHtml = postHtml.querySelector('.js-likes-counter');
     
+    let isLiked = false;
+    let numberOfLikes = Number.parseInt(likeCounterHtml.textContent);
+
+    likeHtml.addEventListener('click', function () {
+        if (!isLiked) {
+            likeHtml.classList.add("like-button--liked");
+            numberOfLikes++;
+            likeCounterHtml.textContent = numberOfLikes;
+            isLiked = true;
+            postLiked.push(post.id)
+            console.log(postLiked);
+        } else {
+            likeHtml.classList.remove("like-button--liked");
+            numberOfLikes--;
+            likeCounterHtml.textContent = numberOfLikes;
+            isLiked = false;
+            postLiked.shift(post.id)
+            console.log(postLiked);
+        }
+    });
+});
 
 
-     
 
-
-
-
-
-
-
-
-
-
+    
 
 
